@@ -1,3 +1,29 @@
+readfile =: 1!:1
+
+NB. Positions des voisins (0, 1), (-1, 1)...
+p=:(4&{.,(_4&{.))(>,{,~<i:1) 
+NB. On trouve la matrice des rolls of paper à retirer
+s =: (* (4&>)@(+/)@(p&(|.!.'')))
+NB. On applique s jusqu'à ce qu'il y ait plus de changement et on compte les rolls of paper
+v =: +/@,@((* -.@s)^:_)
+
+parse_input =: '@'&=@>&<;._2
+
+exampleinput =: parse_input readfile < './example-input'
+input =: parse_input readfile < './input'
+
+NB. Solution part 1
++/, s exampleinput NB. 13
++/, s input NB. 1505
+
+NB. Solution part 2
+(+/@, - v) exampleinput NB. 43
+(+/@, - v) input NB. 9182
+
+
+NB. ------------------------------------------------
+NB. Cheminement
+NB. ------------------------------------------------
 NB. The Cheatsheet : https://sergeyqz.github.io/jcheatsheet/
 NB. Conway's Game of Life in J : https://copy.sh/jlife/
 
@@ -65,7 +91,7 @@ NB. On obtient la matrice attendue
 NB. fewer than four
 
 +/,(4&>)+/p&(|.!.'') ones
-readfile =: 1!:1
+
 exampleinput =: readfile < './example-input'
 NB. On a 110 caractères 10 + \n sur 10 lignes
 10 11 $ exampleinput
@@ -84,4 +110,41 @@ $ ><;._2 input
 m1 =: '@'&= ><;._2 input
 t1 =: (4&>)+/p&(|.!.'') m1
 +/, m1 * t1 NB. 1505
+
+NB. La partie 2 demande d'appliquer la transformation X fois.
+NB. On va essayer de produire un verbe "s" (pour step).
+
+parse_input =: '@'&=@>&<;._2
+
+m =: parse_input exampleinput
+count_living =: (4&>)@(+/)@(p&(|.!.'')) 
+s =: (* count_living)
++/@,& s m
+
+NB. On inline pour faire plus J.
+s =: (* (4&>)@(+/)@(p&(|.!.'')))
+
+NB. une étape complète :
+NB. s m -> x : ceux à supprimer
+NB. m * (négatif de x) -> m', le point de départ
+
+NB. -. = Not
+NB. u ^: _ B = Converge. Applique u jusqu'il n'y ait plus de changement
++/, (* -.@s) ^:_ m
+NB. FAUSSE ROUTE
+NB. J'ai cherché longtemps comment obtenir les tableaux intermédiaires et tout.
+NB. Sauf que ça ne sert à rien !
+NB. Il suffit de soustraire le nombre de "rolls of paper" final du nombre initial et paf ! 
+
+NB. Solution
+(+/, m) - (+/, (* -.@s) ^:_ m)
+
+NB. Comment on fait ça plus proprement ?
+v =: +/@,@((* -.@s)^:_)
+v m
+
+(+/@, - v) m
+
+(+/@, - v) parse_input input
+
 
