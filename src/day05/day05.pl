@@ -33,3 +33,13 @@ solve_part1(Input, N) :-
     part1(Pairs, Numbers, N).
 
 % -? read_file_to_string("input", String, []), solve_part1(String, N).
+
+part2(Pairs, N) :-
+    setof(V, inranges(Pairs, V), Results),
+    length(Results, N).
+
+solve_part2(Input, N) :-
+    parse_input(Input, Pairs, _),
+    part2(Pairs, N).
+
+% -? read_file_to_string("input", String, []), solve_part2(String, N).
