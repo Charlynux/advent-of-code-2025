@@ -41,5 +41,5 @@ part2(Pairs, N) :-
 solve_part2(Input, N) :-
     parse_input(Input, Pairs, _),
     part2(Pairs, N).
-
+% Marche pour le petit input, mais explose (Stack limit 1Go) avec le vrai input
 % -? read_file_to_string("input", String, []), solve_part2(String, N).
