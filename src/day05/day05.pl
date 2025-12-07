@@ -1,5 +1,5 @@
-% Implémentation fonctionnelle pour l'exemple.
-% Testée uniquement via un éditeur "online".
+is_empty_string(S) :-
+    S == "".
 
 split_input(Lines, Pairs, Values) :-
     append(Pairs , ["" | Values], Lines).
@@ -12,29 +12,24 @@ parse_input(Input, Pairs, Values) :-
     split_string(Input, "\n", "", Lines),
     split_input(Lines, StrPairs, StrValues),
     maplist(parse_pair, Pairs, StrPairs),
-    maplist(number_string, Values, StrValues).
+    % Juste pour la dernière ligne........
+    exclude(is_empty_string, StrValues, NumberValues),
+    maplist(number_string, Values, NumberValues).
 
 read_input(Filename, Pairs, Values) :-
     read_file_to_string(Filename, String, []),
     parse_input(String, Pairs, Values).
 
+inranges(Pairs, S) :-
+    member([A, B], Pairs),
+    between(A, B, S).
+
+part1(Pairs, Numbers, N) :-
+    include(inranges(Pairs), Numbers, Filtered),
+    length(Filtered, N).
+
 solve_part1(Input, N) :-
     parse_input(Input, Pairs, Numbers),
     part1(Pairs, Numbers, N).
 
-solve_part1("3-5
-10-14
-16-20
-12-18
-
-1
-5
-8
-11
-17
-32
-", N).
-
-% A TESTER
-read_file_to_string("input", String, []),
-solve_part1(String, N).
+% -? read_file_to_string("input", String, []), solve_part1(String, N).
